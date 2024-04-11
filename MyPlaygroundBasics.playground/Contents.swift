@@ -185,3 +185,138 @@ for i in 0...4 {
     total2 += i
 }
 print(total2)
+
+
+
+// functions
+// _ is used for arguments that dont want any labels to be given when called.
+// Custom labels can be put before the argument name and when calling the function, we can use this label instead of passing the actual argument name like shown below.
+func greet(_ person: String, on day: String) -> String {
+    return "Hello \(person), today is \(day)"
+}
+
+
+greet("Simran", on: "thursday")
+
+
+// we can use tuples to return multiple values from a function.
+// we can refer to return values using number or the name of the value
+
+func calculateStatistics(_ values: [Int]) -> (min: Int, max: Int, sum: Int) {
+    var max = values[0]
+    var min = values[0]
+    var sum = 0
+    
+    for value in values {
+        if value < min {
+            min = value
+        } else if value > max {
+            max = value
+        }
+        sum += value
+    }
+    
+    return( min, max, sum)
+}
+
+let statistics = calculateStatistics([4,7,2,1,8,9,10])
+
+// accessing the return value from tuple using the name
+print(statistics.min)
+
+// accessing return value from tuple using its position in the tuple.
+print(statistics.0)
+
+
+
+
+// nested functions
+
+func nestingExample(_ value: Int) -> Int {
+    var min = value
+    func add() {
+        min += 5
+    }
+    add()
+    return min
+}
+
+let result = nestingExample(4)
+print(result)
+
+
+
+// functions are first-class types, i.e functions can return other functions.
+
+
+func returningFunction() -> ((String) -> String) {
+    func nameFunction(_ name: String) -> String {
+        return "Hello \(name)"
+    }
+    return nameFunction
+ }
+
+
+// Here we get the function returned by the parent function by just calling the parent function.
+var namingFunctionReturned = returningFunction()
+
+// Once we have the actual returned function, we can call the function using the arguments.
+namingFunctionReturned("Rishabh")
+
+
+// Functions can also accept other functions as arguments
+
+// Parent function that takes another function as argument
+func argumentAcceptingFunction(list: [Int], acceptedFunction: (Int) -> Bool) -> Bool? {
+    for item in list {
+        if acceptedFunction(item) {
+            return true
+        }
+    }
+    return false
+}
+
+
+// Function that is passed as the argument
+//func lessThanTen(_ num: Int) -> Bool {
+//   return num < 10
+//}
+
+
+// Calling the actual function that takes another function as argument
+
+var list = [11,10,14,20,11,17,11]
+let resultingValue = argumentAcceptingFunction(list: list, acceptedFunction: {(num:Int) -> Bool in
+    return num < 10
+})
+
+
+print(resultingValue!)
+
+
+// We can write functions without a name using braces {}.
+// For this nameless function, to seperate the function definition and the body, we use 'in' keyword
+var newList = list.map({(value:Int) -> Int in
+    return value % 2 == 0 ? 1 : 0
+})
+
+print(newList)
+
+// We can omit the argument type and return type when we know the type of closure. Here since list is an array of integers and map iterates over each element, compiler understands that it will get an integer and has to return an integer
+
+let mappedNumbers = list.map({ listItem in "rishabh" })
+print(mappedNumbers)
+
+// we can use trailing closure syntax for passing closures.
+// Say there is a function whose last argument is a closure, we can put the closure directly outside the parenthesis
+
+func doSomething(num:Int, closure: () -> Void) {
+    closure()
+    print("executing main function")
+}
+
+
+// Now while calling the function, instead of actually passing the closure to the function as argument, we can write it outside the parenthesis like this
+doSomething(num: 10) {
+    print("Executing closure")
+}
