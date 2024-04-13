@@ -320,3 +320,168 @@ func doSomething(num:Int, closure: () -> Void) {
 doSomething(num: 10) {
     print("Executing closure")
 }
+
+
+// Objects and classes
+
+
+// create a class
+class NamedShape {
+    var name: String = ""
+    var numberOfSides: Double = 0
+    init(_ name: String) {
+        self.name = name
+    }
+    
+    func shapeName() -> String {
+        return "\(self.name)"
+    }
+    
+    deinit {
+        self.name = ""
+    }
+}
+
+
+// create object
+
+var circle = NamedShape("circle")
+
+print(circle.shapeName())
+
+
+
+// inheritance
+// Square class inherits NamedShape class
+class Square: NamedShape {
+    var sideLength: Double
+    
+    init(_ sideLength: Double, _ name: String) {
+        self.sideLength = sideLength;
+        super.init(name);
+        numberOfSides = 4
+    }
+    
+    // Defining a property with getter and setter
+    // Getter is self explanatory
+    // Setter is called, whenever we set the value explicitly. this here means, that if the value of perimeter is set manually, then the sideLength property is now calculated based on the value set for perimeter.
+    var perimeter: Double {
+        get {
+            return numberOfSides * sideLength
+        }
+        set {
+            sideLength = newValue / numberOfSides
+        }
+    }
+    func getPerimeter() -> Double {
+        print("Getting perimeter...")
+        return numberOfSides * sideLength
+    }
+    
+    func getArea() -> Double {
+        print("Getting area...")
+        return sideLength * sideLength
+    }
+    
+    override func shapeName() -> String {
+        return "The shape is called \(name) since it has \(numberOfSides) sides"
+    }
+}
+
+
+
+var square = Square(2, "my-square")
+
+print(square.shapeName());
+
+print(square.getArea())
+
+print(square.getPerimeter())
+
+print(square.perimeter)
+print(square.sideLength)
+square.perimeter = 16.0
+
+print(square.sideLength)
+
+
+// creating a new triangle class
+
+class EquilaterTriangle:NamedShape {
+    var sideLength: Double
+    
+    init(_ sideLength: Double, _ name: String) {
+        self.sideLength = sideLength;
+        super.init(name);
+        numberOfSides = 4
+    }
+    
+    // Defining a property with getter and setter
+    // Getter is self explanatory
+    // Setter is called, whenever we set the value explicitly. this here means, that if the value of perimeter is set manually, then the sideLength property is now calculated based on the value set for perimeter.
+    var perimeter: Double {
+        get {
+            return numberOfSides * sideLength
+        }
+        set {
+            sideLength = newValue / numberOfSides
+        }
+    }
+    
+    override func shapeName() -> String {
+        return "The shape is called \(name) since it has \(numberOfSides) sides"
+    }
+}
+
+
+// willSet and didSet property observers.
+// They provide a way to observe and respond to changes in property values.
+
+class TriangleAndSqaure {
+    var triangle: EquilaterTriangle {
+        
+        // whenever the property triangle is set/updated manually or somewhere else, first the willSet observer will execute and set the square's sidelength to the newValue i.e new traingle's sidelength
+        willSet {
+            square.sideLength = newValue.sideLength
+        }
+    }
+    
+    var square: Square {
+        // whenever the property square is set/updated manually or somewhere else, first the willSet observer will execute and set the traingle's sidelength to the newValue i.e new square's sidelength
+        willSet {
+            triangle.sideLength = newValue.sideLength
+        }
+
+    }
+    
+    init(_ size: Double, _ name: String) {
+        square = Square(size, name)
+        triangle = EquilaterTriangle(size, name)
+    }
+}
+
+
+// create object
+var newTS = TriangleAndSqaure(5.0, "my-ts")
+print(newTS.square.sideLength)
+print(newTS.triangle.sideLength)
+
+
+// update the square with newSideLength
+newTS.square = Square(9.9, "my-newsquare")
+print(newTS.square.sideLength)
+print(newTS.triangle.sideLength)
+
+
+// optional values with classes
+
+// when declaring as constants, we need to give a value while initialization, otherwise it crashes with an error constan defined here.
+let optionalSquare: Square? = nil
+let sideLength = optionalSquare?.sideLength
+
+
+
+// Incase when the declaration is variable (defined with var), no need to give a value at initialization, the compiler understands and this code works.
+var optionalSquare2: Square?
+var sideLength2 = optionalSquare2?.sideLength
+
